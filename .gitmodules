@@ -1,0 +1,3 @@
+[submodule "@lopy"]
+	path = @lopy
+	url = git@github.com:PetterKraabol/vigilate-lopy.git

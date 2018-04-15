@@ -1,19 +1,20 @@
-import cv2
-import time
-from sensors import Camera, GPS
-from devices import LoPy
-from vigilate import Video
+import argparse
+from devices import RaspberryPi
 
 
-def main():
-    lopy: LoPy = LoPy('COM4')
-    for i in range(10):
-        print('Reading...')
-        message: str = str(lopy.serial.read(9))
-        print(message)
-        time.sleep(1)
+def main(arguments: dict):
+    device: RaspberryPi = RaspberryPi(arguments['name'],
+                                      serial_port=arguments['serial_port'],
+                                      baud_rate=arguments['baud_rate'])
+
+
+def parse_arguments() -> dict:
+    parser = argparse.ArgumentParser(description='Vigilate RaspberryPi')
+    parser.add_argument('-n', '--name', type=str, help='Device name')
+    parser.add_argument('--serial', type=str, default='/dev/serial0', help='Serial port')
+    parser.add_argument('--baud_rate', type=int, default=115200, help='Serial baud rate')
+    return parser.parse_args().__dict__
 
 
 if __name__ == '__main__':
-    print(f'Currently using OpenCV {cv2.__version__}')
-    main()
+    main(parse_arguments())

@@ -7,7 +7,7 @@ class LoPy:
     def __init__(self, port: str = '/dev/serial0', baud_rate: int = 115200, timeout: int = 10):
         self.serial = serial.Serial(port, baud_rate, timeout=timeout)
 
-    def send(self, data: Union[bytes, str]):
+    def transmit(self, data: Union[bytes, str]):
 
         # Split data into 255 byte segments for sending
         segments: List[bytes] = [data[i:i+254] for i in range(0, len(data), 254)]

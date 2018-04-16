@@ -1,1 +1,1 @@
-from .video import Video
+from .vigilate import Vigilate

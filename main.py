@@ -1,14 +1,14 @@
 import argparse
-import subprocess
+from vigilate import Vigilate
 from devices import RaspberryPi
 
 
 def main(arguments: dict):
-    device: RaspberryPi = RaspberryPi(arguments['name'],
-                                      serial_port=arguments['serial_port'],
-                                      baud_rate=arguments['baud_rate'])
-    device.lorawan.transmit(b'Hello world')
-    print(device.lorawan.receive())
+    # device: RaspberryPi = RaspberryPi(arguments['name'],
+    #                                  serial_port=arguments['serial_port'],
+    #                                  baud_rate=arguments['baud_rate'])
+    program: Vigilate = Vigilate()
+    program.start()
 
 
 def parse_arguments() -> dict:
@@ -20,8 +20,5 @@ def parse_arguments() -> dict:
 
 
 if __name__ == '__main__':
-    label = subprocess.check_output(["git", "describe"]).strip()
-
     # Run main program
     main(parse_arguments())
-ø

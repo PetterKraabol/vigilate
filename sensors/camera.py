@@ -1,13 +1,17 @@
 import cv2
-from typing import Generator
 
 
-class Camera:
-    def __init__(self, ):
-        pass
-
-    def capture(self):
-        pass
+class Camera(cv2.VideoCapture):
+    def __init__(self, *args, **kwargs):
+        super(Camera, self).__init__(*args, **kwargs)
 
     def stream(self):
-        pass
+        while True:
+            success, frame = self.read()
+            if success:
+                yield frame
+            else:
+                print('No frames')
+                break
+
+        self.release()

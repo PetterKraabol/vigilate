@@ -171,7 +171,7 @@ else:
     IMAGE_SOURCE = IMAGE_FILENAME_FORMAT  # Image sequence
 
 # Time to wait between frames, 0=forever
-WAIT_TIME = 250  # 250 # ms
+WAIT_TIME = 1  # 250 # ms
 
 LOG_TO_FILE = False
 
@@ -245,7 +245,7 @@ def detect_vehicles(fg_mask):
 
     matches = []
     for (i, contour) in enumerate(contours):
-        print(contour)
+        # print(contour)
         x, y, w, h = cv2.boundingRect(contour)
         contour_valid = (w >= MIN_CONTOUR_WIDTH) and (h >= MIN_CONTOUR_HEIGHT)
 
@@ -295,8 +295,8 @@ def process_frame(frame_number, frame, bg_subtractor, car_counter):
     fg_mask = bg_subtractor.apply(frame, None, 0.01)
     fg_mask = filter_mask(fg_mask)
 
-    save_frame(IMAGE_DIR + "/mask_%04d.png"
-               , frame_number, fg_mask, "foreground mask for frame #%d")
+    #save_frame(IMAGE_DIR + "/mask_%04d.png"
+    #           , frame_number, fg_mask, "foreground mask for frame #%d")
 
     matches = detect_vehicles(fg_mask)
 
@@ -326,7 +326,7 @@ def main():
     log.disabled = DISABLE_LOGGING
 
     log.debug("Creating background subtractor...")
-    bg_subtractor = cv2.bgsegm.createBackgroundSubtractorMOG()
+    bg_subtractor = cv2.createBackgroundSubtractorMOG2()
 
     log.debug("Pre-training the background subtractor...")
     default_bg = cv2.imread(IMAGE_FILENAME_FORMAT % 119)

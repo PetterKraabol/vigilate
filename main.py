@@ -20,5 +20,4 @@ def parse_arguments() -> dict:
 
 
 if __name__ == '__main__':
-    # Run main program
     main(parse_arguments())

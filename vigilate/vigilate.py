@@ -10,38 +10,38 @@ from .line import Line
 
 
 class Vigilate:
-    def __init__(self, pi: RaspberryPi = None, entrance_line: int = 400, exit_line: int = 450, preview: bool = True):
+    def __init__(self, pi: RaspberryPi = None, entrance_line: int = 800, exit_line: int = 1200, preview: bool = True):
         self.entrance = Coordinate(0, entrance_line)
         self.exit = Coordinate(0, exit_line)
         self.line_thickness = 2  # If object is within n pixels of line, increase counter
 
         # Sensors
         # self.camera = Camera(0) # Webcam
-        self.camera = Camera('media/regular.mp4')
+        self.camera = Camera('media/vertical.mp4')
         # self.camera = Camera('media/complex.mp4')
 
         # Devices
         self.pi: RaspberryPi = pi
 
         # Settings
-        self.width = 1280
-        self.height = 720
+        self.width = 1920
+        self.height = 1080
         self.camera.set(3, self.width)
         self.camera.set(4, self.height)
         self.reference_frame = None
         self.entities: List[Entity] = []
-        self.entity_max_radius: int = 50
+        self.entity_max_radius: int = 100
         self.preview: bool = preview
         self.lines: List[Line] = []
 
         self.entrance_counter = 0
         self.exit_counter = 0
-        self.min_contour_area = 3000
-        self.max_contour_area = 20000
+        self.min_contour_area = 5000
+        self.max_contour_area = 200000
         self.binarization_threshold = 70
 
         # Lines
-        self.add_line(Coordinate(0, 500), Coordinate(self.width, 500), (0, 255, 255))
+        #self.add_line(Coordinate(1000, 1000), Coordinate(self.width, 1000), (0, 255, 255))
 
     @staticmethod
     def distance(a: Coordinate, b: Coordinate) -> float:
@@ -121,8 +121,8 @@ class Vigilate:
 
     def start(self):
         # Skip first frames to let camera calibrate itself
-        for i in range(20):
-            self.camera.read()
+        #for i in range(20):
+        #    self.camera.read()
 
         # Subtractor
         bg_subtractor = cv2.createBackgroundSubtractorMOG2(detectShadows=True)
@@ -158,6 +158,9 @@ class Vigilate:
             # Find contours (objects)
             _, contours, _ = cv2.findContours(fg_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+            # Display foreground masking frame
+            #frame = fg_mask
+
             # Plot entrance and exit lines
             # cv2.line(frame, (0, self.entrance.y), (self.width, self.entrance.y), (255, 0, 0), self.line_thickness)
             cv2.line(frame, (0, self.exit.y), (self.width, self.exit.y), (255, 0, 255), self.line_thickness)
@@ -180,6 +183,11 @@ class Vigilate:
                 # Draw rectangle
                 cv2.rectangle(frame, (x, y), (x + width, y + width), entity.color, 2)
 
+                if Vigilate.passed_line(self.exit, entity):
+                    entity.active = False
+                    self.exit_counter += 1
+                    continue
+
                 # Draw history line
                 previous_position: Coordinate = None
                 for position in entity.positions():
@@ -192,10 +200,6 @@ class Vigilate:
                              1)
                     cv2.circle(frame, (position.x, position.y), 5, entity.color, 2)
                     previous_position = position
-
-                if Vigilate.passed_line(self.exit, entity):
-                    entity.active = False
-                    self.exit_counter += 1
 
             # Write stats on screen
             # cv2.putText(frame, f'Entrances: {self.entrance_counter}', (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5,

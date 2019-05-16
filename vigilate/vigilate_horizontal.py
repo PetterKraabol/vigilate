@@ -156,7 +156,7 @@ class VigilateHorizontal:
             fg_mask = VigilateHorizontal.filter_mask(fg_mask)
 
             # Find contours (objects)
-            _, contours, _ = cv2.findContours(fg_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv2.findContours(fg_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
             # Display foreground masking frame
             #frame = fg_mask

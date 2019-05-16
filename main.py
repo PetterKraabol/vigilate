@@ -1,8 +1,8 @@
 import argparse
+from typing import Union
+
 from vigilate import Vigilate
 from vigilate import VigilateHorizontal
-from devices import RaspberryPi
-from typing import Union
 
 
 def main(arguments: dict):
@@ -10,13 +10,7 @@ def main(arguments: dict):
     #                                  serial_port=arguments['serial_port'],
     #                                  baud_rate=arguments['baud_rate'])
 
-    program: Union[VigilateHorizontal, Vigilate]
-
-    if arguments['horizontal']:
-        program = VigilateHorizontal()
-    else:
-        program = Vigilate()
-
+    program: Union[VigilateHorizontal, Vigilate] = VigilateHorizontal() if arguments['horizontal'] else Vigilate()
     program.start()
 
 
